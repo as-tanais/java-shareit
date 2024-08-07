@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceInMemoryImpl implements UserService{
+public class UserServiceInMemoryImpl implements UserService {
     private final Map<Integer, User> users = new HashMap<>();
     private int id = 1;
     private final UserMapper userMapper;
