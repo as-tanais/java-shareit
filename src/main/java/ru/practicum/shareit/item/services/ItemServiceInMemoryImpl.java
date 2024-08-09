@@ -74,7 +74,7 @@ public class ItemServiceInMemoryImpl implements ItemService {
 
     @Override
     public List<ItemDto> find(String text) {
-        if (text.equals("")) return new ArrayList<>();
+        if (text.isEmpty()) return new ArrayList<>();
 
         return items.values().stream()
                 .filter(item -> item.getName() != null && item.getName().toLowerCase().contains(text.toLowerCase()) ||

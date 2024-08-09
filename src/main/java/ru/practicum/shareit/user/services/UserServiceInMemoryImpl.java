@@ -35,7 +35,7 @@ public class UserServiceInMemoryImpl implements UserService {
         User oldUser = users.get(id);
         String newEmail = newUserDto.getEmail();
         String newName = newUserDto.getName();
-        if (newEmail != null && !newEmail.equals(oldUser.getEmail())) {
+        if (newEmail != null && !newEmail.equals(oldUser.getEmail()) && !newEmail.isEmpty()) {
             validateUserDtoEmail(newUserDto);
             users.get(id).setEmail(newEmail);
         }
@@ -64,7 +64,7 @@ public class UserServiceInMemoryImpl implements UserService {
 
     private void validateUserDtoEmail(UserDto userDto) {
         if (users.values().stream().anyMatch(user -> user.getEmail().equals(userDto.getEmail()))) {
-            throw new EmailIsNotUniqueException(String.format("Error add user with this email. Email already used", userDto.getEmail()));
+            throw new EmailIsNotUniqueException(String.format("Error add user with this email %s. Email already used", userDto.getEmail()));
         }
     }
 
