@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.mappers.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -37,6 +37,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final UserMapper userMapper;
+    private final BookingMapper bookingMapper;
 
     @Override
     public ItemDto addItem(ItemDto itemDto, int ownerId) {
@@ -86,11 +87,11 @@ public class ItemServiceImpl implements ItemService {
         if (item.getOwner().getId() == userId) {
             Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStartBeforeAndStatusNotOrderByStartDesc(itemId, LocalDateTime.now(), BookingStatus.REJECTED);
             if (!lastBooking.isEmpty()) {
-                itemDto.setLastBooking(BookingMapper.toBookingDto(lastBooking.get()));
+                itemDto.setLastBooking(bookingMapper.toBookingDto(lastBooking.get()));
             }
             Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStartAfterAndStatusNotOrderByStart(itemId, LocalDateTime.now(), BookingStatus.REJECTED);
             if (!nextBooking.isEmpty()) {
-                itemDto.setNextBooking(BookingMapper.toBookingDto(nextBooking.get()));
+                itemDto.setNextBooking(bookingMapper.toBookingDto(nextBooking.get()));
             }
         }
 
