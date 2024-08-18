@@ -6,7 +6,7 @@ import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exceptions.*;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.mappers.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -27,7 +27,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-
+    private final BookingMapper bookingMapper;
 
 
     @Override
@@ -42,9 +42,9 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingUnavailableItemException(String.format("Can not book item with id %d. It is unavailable.", item.getId()));
         }
 
-        Booking booking = BookingMapper.toBookingFromBookingRequest(bookingDtoRequest, item,booker, BookingStatus.WAITING);
+        Booking booking = bookingMapper.toBookingFromBookingRequest(bookingDtoRequest, item,booker, BookingStatus.WAITING);
         Booking savedBooking = bookingRepository.save(booking);
-        return BookingMapper.toBookingDto(savedBooking);
+        return bookingMapper.toBookingDto(savedBooking);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
         }
         BookingStatus newStatus = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
         booking.setStatus(newStatus);
-        return BookingMapper.toBookingDto(booking);
+        return bookingMapper.toBookingDto(booking);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class BookingServiceImpl implements BookingService {
         if (userId != bookingBookerId && userId != itemOwnerId) {
             throw new AccessException("Only booker or item owner can booking details.");
         }
-        return BookingMapper.toBookingDto(bookingRepository.findById(bookingId).get());
+        return bookingMapper.toBookingDto(bookingRepository.findById(bookingId).get());
     }
 
     @Override
@@ -97,7 +97,7 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 throw new WrongStateParameterException("State parameter is wrong.");
         }
-        return bookingList.stream().map(BookingMapper::toBookingDto).toList();
+        return bookingList.stream().map(bookingMapper::toBookingDto).toList();
     }
 
     public List<BookingDto> getAllByOwner(int userId, BookingState bookingState) {
@@ -126,7 +126,7 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 throw new WrongStateParameterException("State parameter is wrong.");
         }
-        return bookingList.stream().map(BookingMapper::toBookingDto).toList();
+        return bookingList.stream().map(bookingMapper::toBookingDto).toList();
     }
 
     private void validateById(int id) {
