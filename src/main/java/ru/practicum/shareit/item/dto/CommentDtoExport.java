@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentDtoExport {
     private Integer id;
-    @NotBlank
+    @NotBlank(message = "Comment should not be empty.")
     private String text;
     private String authorName;
     private LocalDateTime created;

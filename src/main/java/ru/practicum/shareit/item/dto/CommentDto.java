@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentDto {
     private int id;
-    @NotBlank
+    @NotBlank(message = "Comment should not be empty.")
     private String text;
     private Item item;
     private User author;

@@ -11,15 +11,14 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import java.util.List;
 
 
-
 @Data
 @Builder
 @AllArgsConstructor
 public class ItemDto {
     private int id;
-    @NotBlank
+    @NotBlank(message = "Item name should not be empty.")
     private String name;
-    @NotBlank
+    @NotBlank(message = "Item description should not be empty.")
     private String description;
     @NotNull
     private Boolean available;

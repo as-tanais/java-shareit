@@ -3,12 +3,15 @@ package ru.practicum.shareit.user.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.InvalidInputException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.mappers.UserMapper;
+
 import java.util.List;
+
 import ru.practicum.shareit.exceptions.EmailIsNotUniqueException;
 
 @Service
@@ -35,7 +38,12 @@ public class UserServiceImpl implements UserService {
         if (newEmail != null && !newEmail.equals(oldUser.getEmail())) {
             validateUserDtoEmail(newUserDto);
             oldUser.setEmail(newEmail);
+
         }
+
+//        if (newEmail.isBlank()) {
+//            throw new InvalidInputException("Email can't be empty");
+//        }
 
         String newName = newUserDto.getName();
         if (newName != null) {
