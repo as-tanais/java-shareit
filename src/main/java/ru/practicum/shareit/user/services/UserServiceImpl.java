@@ -3,16 +3,14 @@ package ru.practicum.shareit.user.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.InvalidInputException;
+import ru.practicum.shareit.exceptions.EmailIsNotUniqueException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mappers.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.mappers.UserMapper;
 
 import java.util.List;
-
-import ru.practicum.shareit.exceptions.EmailIsNotUniqueException;
 
 @Service
 @RequiredArgsConstructor
