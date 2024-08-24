@@ -102,6 +102,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
 
+
     @Override
     public List<ItemDtoInv> getAllItems(Long ownerId) {
         List<Item> itemsOfOwner = itemRepository.findAllByOwnerId(ownerId);
@@ -156,7 +157,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDtoExport addComment(int itemId, int userId, Comment comment) {
-        User author = userRepository.findById(userId)
+        User author =  userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Can not find user with id %d.", userId)));
 
         Item item = itemRepository.findById(itemId)
