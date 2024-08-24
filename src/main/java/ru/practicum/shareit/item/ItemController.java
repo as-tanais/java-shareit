@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDtoExport;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoInv;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.services.ItemService;
 
@@ -41,7 +42,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader(USER_ID_HEADER) int ownerId) {
+    public List<ItemDtoInv> getAll(@RequestHeader(USER_ID_HEADER) Long ownerId) {
         return itemService.getAllItems(ownerId);
     }
 

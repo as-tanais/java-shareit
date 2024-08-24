@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingDtoItemInfo;
 import ru.practicum.shareit.booking.mappers.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.UnavailableToAddCommentException;
 import ru.practicum.shareit.item.dto.CommentDtoExport;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoInv;
 import ru.practicum.shareit.item.mappers.CommentMapper;
 import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -26,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -98,12 +101,45 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
+
     @Override
-    public List<ItemDto> getAllItems(int ownerId) {
-        return itemRepository.findAll().stream()
-                .filter(item -> item.getOwner().getId() == ownerId)
-                .map(item -> itemMapper.toItemDto(item))
-                .toList();
+    public List<ItemDtoInv> getAllItems(Long ownerId) {
+        List<Item> itemsOfOwner = itemRepository.findAllByOwnerId(ownerId);
+        List<ItemDtoInv> itemsWithBookingInformation = new ArrayList<>();
+        for (Item item : itemsOfOwner) {
+            List<CommentDtoExport> comments = commentRepository.findAllByItemId(item.getId())
+                    .stream()
+                    .map(CommentMapper::toCommentDtoExport)
+                    .collect(Collectors.toList());
+            List<Booking> bookings = new ArrayList<>();
+            List<Booking> lastBookingByItem = bookingRepository.findFirst1ByItemIdAndStartIsBeforeOrderByStartDesc(item.getId(), LocalDateTime.now());
+            if (!lastBookingByItem.isEmpty()) {
+                bookings.add(lastBookingByItem.get(0));
+            } else {
+                ItemDtoInv itemDtoWithBookingInformation =
+                        itemMapper.toItemDtoInv(item, null, null, comments);
+                itemsWithBookingInformation.add(itemDtoWithBookingInformation);
+                continue;
+            }
+            List<Booking> nextBookingByItem = bookingRepository.findFirst1ByItemIdAndStartIsAfterOrderByStartAsc(item.getId(), LocalDateTime.now());
+            if (!nextBookingByItem.isEmpty()) {
+                bookings.add(nextBookingByItem.get(0));
+            }
+            List<BookingDtoItemInfo> bookingsForItemInformation =
+                    bookings.stream()
+                            .map(BookingMapper::toBookingDtoItemInfo)
+                            .collect(Collectors.toList());
+            ItemDtoInv itemDtoWithBookingInformation;
+            if (bookings.size() == 1) {
+                itemDtoWithBookingInformation = itemMapper.toItemDtoInv(item,
+                        bookingsForItemInformation.get(0), null, comments);
+            } else {
+                itemDtoWithBookingInformation = itemMapper.toItemDtoInv(item,
+                        bookingsForItemInformation.get(0), bookingsForItemInformation.get(1), comments);
+            }
+            itemsWithBookingInformation.add(itemDtoWithBookingInformation);
+        }
+        return itemsWithBookingInformation;
     }
 
     @Override
@@ -120,7 +156,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDtoExport addComment(int itemId, int userId, Comment comment) {
-        User author =  userRepository.findById(userId)
+        User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Can not find user with id %d.", userId)));
 
         Item item = itemRepository.findById(itemId)

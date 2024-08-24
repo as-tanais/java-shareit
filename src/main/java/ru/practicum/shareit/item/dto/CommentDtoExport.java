@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentDtoExport {
     private Integer id;
-    @NotBlank(message = "Comment should not be empty.")
     private String text;
     private String authorName;
     private LocalDateTime created;
