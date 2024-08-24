@@ -45,7 +45,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public static BookingDtoItemInfo toBookingDtoItemInfo (Booking booking) {
+    public static BookingDtoItemInfo toBookingDtoItemInfo(Booking booking) {
         return BookingDtoItemInfo.builder()
                 .id(booking.getId())
                 .ownerId(booking.getBooker().getId())
