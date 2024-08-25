@@ -80,26 +80,15 @@ public class BookingServiceImpl implements BookingService {
         userService.validateUserById(userId);
         List<Booking> bookingList = new ArrayList<>();
         LocalDateTime currentTime = LocalDateTime.now();
-        switch (bookingState) {
-            case ALL:
-                bookingList = bookingRepository.findAllByBookerId(userId);
-                break;
-            case CURRENT:
-                bookingList = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
-                        currentTime, currentTime);
-                break;
-            case PAST:
-                bookingList = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, currentTime);
-                break;
-            case FUTURE:
-                bookingList = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, currentTime);
-                break;
-            case WAITING:
-                bookingList = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
-                break;
-            case REJECTED:
-                throw new WrongStateParameterException("State parameter is wrong.");
-        }
+        bookingList = switch (bookingState) {
+            case ALL -> bookingRepository.findAllByBookerId(userId);
+            case CURRENT -> bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
+                    currentTime, currentTime);
+            case PAST -> bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, currentTime);
+            case FUTURE -> bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, currentTime);
+            case WAITING -> bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+            case REJECTED -> throw new WrongStateParameterException("State parameter is wrong.");
+        };
         return bookingList.stream().map(BookingMapper::toBookingDto).toList();
     }
 
@@ -109,26 +98,16 @@ public class BookingServiceImpl implements BookingService {
 
         List<Booking> bookingList = new ArrayList<>();
         LocalDateTime currentTime = LocalDateTime.now();
-        switch (bookingState) {
-            case ALL:
-                bookingList = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId);
-                break;
-            case CURRENT:
-                bookingList = bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
-                        currentTime, currentTime);
-                break;
-            case PAST:
-                bookingList = bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, currentTime);
-                break;
-            case FUTURE:
-                bookingList = bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, currentTime);
-                break;
-            case WAITING:
-                bookingList = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
-                break;
-            case REJECTED:
-                throw new WrongStateParameterException("State parameter is wrong.");
-        }
+        bookingList = switch (bookingState) {
+            case ALL -> bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId);
+            case CURRENT -> bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
+                    currentTime, currentTime);
+            case PAST -> bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, currentTime);
+            case FUTURE -> bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, currentTime);
+            case WAITING ->
+                    bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+            case REJECTED -> throw new WrongStateParameterException("State parameter is wrong.");
+        };
         return bookingList.stream().map(BookingMapper::toBookingDto).toList();
     }
 
