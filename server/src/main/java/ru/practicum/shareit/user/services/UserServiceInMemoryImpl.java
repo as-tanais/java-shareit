@@ -31,7 +31,7 @@ public class UserServiceInMemoryImpl implements UserService {
 
     @Override
     public UserDto updateUser(int id, UserDto newUserDto) {
-        validateById(id);
+        validateUserById(id);
         User oldUser = users.get(id);
         String newEmail = newUserDto.getEmail();
         String newName = newUserDto.getName();
@@ -47,7 +47,7 @@ public class UserServiceInMemoryImpl implements UserService {
 
     @Override
     public void deleteUserById(int id) {
-        validateById(id);
+        validateUserById(id);
         users.remove(id);
     }
 
@@ -58,7 +58,7 @@ public class UserServiceInMemoryImpl implements UserService {
 
     @Override
     public UserDto getUserById(int id) {
-        validateById(id);
+        validateUserById(id);
         return userMapper.toUserDto(users.get(id));
     }
 
@@ -68,7 +68,7 @@ public class UserServiceInMemoryImpl implements UserService {
         }
     }
 
-    public void validateById(int id) {
+    public void validateUserById(int id) {
         if (!users.containsKey(id)) {
             throw new NotFoundException(String.format("User with id %d is not found.", id));
         }
