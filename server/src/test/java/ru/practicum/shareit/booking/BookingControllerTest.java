@@ -45,7 +45,6 @@ public class BookingControllerTest {
     private BookingDtoRequest bookingDtoRequest;
 
     private BookingDto bookingDtoResponse;
-    private User owner;
     private User booker;
     private Item item;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -53,7 +52,7 @@ public class BookingControllerTest {
 
     @BeforeEach
     void setup() {
-        owner = User.builder().id(1).name("Owner").email("owner@test.com").build();
+        User owner = User.builder().id(1).name("Owner").email("owner@test.com").build();
         booker = User.builder().id(2).name("Booker").email("booker@test.com").build();
         item = Item.builder().id(1).name("Item").description("Item Description").available(true).owner(owner).build();
 

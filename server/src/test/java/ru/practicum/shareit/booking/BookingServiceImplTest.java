@@ -118,9 +118,7 @@ public class BookingServiceImplTest {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(booker));
         when(itemRepository.findById(anyInt())).thenReturn(Optional.of(item));
 
-        assertThrows(BookingUnavailableItemException.class, () -> {
-            bookingService.create(bookingDtoRequest, booker.getId());
-        });
+        assertThrows(BookingUnavailableItemException.class, () -> bookingService.create(bookingDtoRequest, booker.getId()));
     }
 
     @Test
