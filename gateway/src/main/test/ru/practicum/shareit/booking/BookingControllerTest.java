@@ -44,7 +44,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void createBooking_ShouldReturnBadRequest_WhenInvalidData() throws Exception {
+    void createBookingBadRequest() throws Exception {
         bookingDtoRequest.setStart(LocalDateTime.parse("2004-08-23T14:00:00"));
 
         mockMvc.perform(post("/bookings")
